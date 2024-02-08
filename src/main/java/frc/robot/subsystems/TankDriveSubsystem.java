@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase;
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,24 +15,18 @@ import frc.robot.common.Odometry;
 
 public class TankDriveSubsystem extends SubsystemBase {
 
-  private ShooterWheelSubsystem backRight;
-  private ShooterWheelSubsystem backLeft;
-  private ShooterWheelSubsystem frontLeft;
-  private ShooterWheelSubsystem frontRight;     
+  private CANSparkMax backRight;
+  private CANSparkMax backLeft;
+  private CANSparkMax frontLeft;
+  private CANSparkMax frontRight;     
   /** Creates a new ExampleSubsystem. */
-  public TankDriveSubsystem(ShooterWheelSubsystem backLeft, ShooterWheelSubsystem backRight, ShooterWheelSubsystem frontLeft, ShooterWheelSubsystem frontRight) {
+  public TankDriveSubsystem(CANSparkMax backLeft, CANSparkMax backRight, CANSparkMax frontLeft, CANSparkMax frontRight) {
+    this.backRight = backRight;
+    this.backLeft = backLeft;
+    this.frontLeft = frontLeft;
+    this.frontRight = frontRight;
+  }
 
-              this.backRight = backRight;
-              this.backLeft = backLeft;
-              this.frontLeft = frontLeft;
-              this.frontRight = frontRight;
-            }
-
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
   public void spin(double speed1, double speed2 ) {
     backRight.set(speed2);
     backLeft.set(speed1);
