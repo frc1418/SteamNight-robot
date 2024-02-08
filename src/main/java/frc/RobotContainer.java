@@ -10,6 +10,7 @@ import frc.robot.Robot;
 import frc.robot.commands.Autos;
 import frc.robot.common.Odometry;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.LegSubsystem;
 import frc.robot.subsystems.MarkWheelSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.TankDriveSubsystem;
@@ -27,7 +28,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.AnalogEncoder;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -83,6 +86,9 @@ public class RobotContainer {
 
     private TankDriveSubsystem tank = new TankDriveSubsystem(bottomLeftWheel, bottomRightWheel, topLeftWheel, topRightWheel);
 
+    private DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
+    private LegSubsystem leg = new LegSubsystem(solenoid);
+
     // private SwerveDriveSubsystem swerveDrive = new SwerveDriveSubsystem(
     //   backRightWheel, backLeftWheel, frontRightWheel, frontLeftWheel,
     //   DrivetrainConstants.SWERVE_KINEMATICS, odometry);
@@ -118,7 +124,7 @@ public class RobotContainer {
     Joystick rightJoystick = new Joystick(1);
     Joystick altJoystick = new Joystick(2);
 
-    JoystickButton turtleButton = new JoystickButton(rightJoystick, 1);
+    JoystickButton kickButton = new JoystickButton(rightJoystick, 1);
 
     JoystickButton fieldCentricButton = new JoystickButton(rightJoystick, 2);
 
@@ -136,7 +142,9 @@ tank.setDefaultCommand(new RunCommand(() -> {
       }    }, tank));
    
 
-
+    kickButton.onTrue(new InstantCommand(() -> {
+      leg.toggle();
+    }, leg));
 
 
 

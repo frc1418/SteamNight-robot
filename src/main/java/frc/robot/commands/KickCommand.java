@@ -7,9 +7,7 @@ import frc.robot.subsystems.LegSubsystem;
 public class KickCommand extends SequentialCommandGroup{
     public KickCommand(LegSubsystem LegSubsystem){
         addCommands(
-            new InstantCommand(() -> LegSubsystem.toggle()),
-            new WaitCommand(0.5)
-            
+            new InstantCommand(() -> LegSubsystem.toggle())            
 
         );
     }

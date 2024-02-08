@@ -3,7 +3,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class LegSubsystem {
+public class LegSubsystem extends SubsystemBase {
     private DoubleSolenoid solenoid;
 
     public LegSubsystem(DoubleSolenoid solenoid) {

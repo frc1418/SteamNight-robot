@@ -17,7 +17,7 @@ public class TankDriveSubsystem extends SubsystemBase {
   private ShooterWheelSubsystem frontLeft;
   private ShooterWheelSubsystem frontRight;     
   /** Creates a new ExampleSubsystem. */
-  public TankDriveSubsystem(ShooterWheelSubsystem backRight, ShooterWheelSubsystem backLeft, ShooterWheelSubsystem frontRight, ShooterWheelSubsystem frontLeft) {
+  public TankDriveSubsystem(ShooterWheelSubsystem backLeft, ShooterWheelSubsystem backRight, ShooterWheelSubsystem frontLeft, ShooterWheelSubsystem frontRight) {
 
               this.backRight = backRight;
               this.backLeft = backLeft;
@@ -31,7 +31,7 @@ public class TankDriveSubsystem extends SubsystemBase {
    * @return a command
    */
   public void spin(double speed1, double speed2 ) {
-    backRight.set(speed1);
+    backRight.set(speed2);
     backLeft.set(speed1);
     frontLeft.set(speed1);
     frontRight.set(speed2);
