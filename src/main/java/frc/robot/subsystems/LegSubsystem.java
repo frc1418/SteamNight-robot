@@ -11,8 +11,9 @@ public class LegSubsystem extends SubsystemBase {
         solenoid.set(Value.kForward);
     }
     public void toggle(){
+        System.out.println("Kick Recieved");
         solenoid.toggle();
-        System.out.println(solenoid.get());
+        System.out.println("Kicked");
         
     }
 }

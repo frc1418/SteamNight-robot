@@ -30,20 +30,20 @@ public class RobotContainer {
 
     private final RobotBase robot;
 
-    private CANSparkMax backRightSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_RIGHT_SPEED_ID, MotorType.kBrushless);
+    private CANSparkMax backRightSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_RIGHT_SPEED_ID, MotorType.kBrushed);
 
-    private CANSparkMax frontRightSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_RIGHT_SPEED_ID, MotorType.kBrushless);
+    private CANSparkMax frontRightSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_RIGHT_SPEED_ID, MotorType.kBrushed);
 
-    private CANSparkMax backLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_LEFT_SPEED_ID, MotorType.kBrushless);
+    private CANSparkMax backLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_LEFT_SPEED_ID, MotorType.kBrushed);
 
-    private CANSparkMax frontLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_LEFT_SPEED_ID, MotorType.kBrushless);
+    private CANSparkMax frontLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_LEFT_SPEED_ID, MotorType.kBrushed);
 
     AHRS gyro = new AHRS(SPI.Port.kMXP);
 
     private TankDriveSubsystem tank = new TankDriveSubsystem(backLeftSpeedMotor, backRightSpeedMotor, frontLeftSpeedMotor, frontRightSpeedMotor);
-
-    private DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, 0, 1);
-    private LegSubsystem leg = new LegSubsystem(solenoid);
+    //coment this back in to enable leg
+    //private DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+    //private LegSubsystem leg = new LegSubsystem(solenoid);
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
@@ -57,6 +57,7 @@ public class RobotContainer {
   }
   
   public void configureObjects() {
+    resetMotors();
 
     coastDrive();
   }
@@ -69,9 +70,11 @@ public class RobotContainer {
     JoystickButton kickButton = new JoystickButton(rightJoystick, 1);
 
 tank.setDefaultCommand(new RunCommand(() -> {
+     //System.out.println("1");
       if (robot.isTeleopEnabled()){
+      //System.out.println("2");
        tank.spin(
-            limitY.calculate(applyDeadband(-leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)),
+            limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)),
              limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));    
       }
       else 
@@ -81,6 +84,7 @@ tank.setDefaultCommand(new RunCommand(() -> {
    
 
     kickButton.onTrue(new InstantCommand(() -> {
+      System.out.println("Kick Triggered");
       leg.toggle();
     }, leg));
   }
@@ -91,6 +95,13 @@ tank.setDefaultCommand(new RunCommand(() -> {
       return 0;
     else return 
       input;
+  }
+
+  public void resetMotors() {
+    frontLeftSpeedMotor.restoreFactoryDefaults();
+    frontRightSpeedMotor.restoreFactoryDefaults();
+    backLeftSpeedMotor.restoreFactoryDefaults();
+    backRightSpeedMotor.restoreFactoryDefaults();
   }
 
   public void coastDrive() {
