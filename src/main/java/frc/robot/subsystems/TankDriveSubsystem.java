@@ -12,29 +12,40 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.common.Odometry;
 
-
 public class TankDriveSubsystem extends SubsystemBase {
 
   private CANSparkMax backRight;
   private CANSparkMax backLeft;
   private CANSparkMax frontLeft;
-  private CANSparkMax frontRight;     
+  private CANSparkMax frontRight;
+
   /** Creates a new ExampleSubsystem. */
-  public TankDriveSubsystem(CANSparkMax backLeft, CANSparkMax backRight, CANSparkMax frontLeft, CANSparkMax frontRight) {
+  public TankDriveSubsystem(CANSparkMax backLeft, CANSparkMax backRight, CANSparkMax frontLeft,
+      CANSparkMax frontRight) {
     this.backRight = backRight;
     this.backLeft = backLeft;
     this.frontLeft = frontLeft;
     this.frontRight = frontRight;
   }
 
-  public void spin(double speed1, double speed2 ) {
+  public void spin(double speed1, double speed2) {
+    if (speed1 < -0.7) {
+      speed1 = -0.7;
+    } if (speed1 > 0.7) {
+      speed1 = 0.7;
+    } if (speed2 > 0.7) {
+      speed2 = 0.7;
+    } if (speed2 < -0.7) {
+      speed2 = -0.7;
+    }
     backRight.set(speed2);
     backLeft.set(speed1);
     frontLeft.set(speed1);
     frontRight.set(speed2);
-   // System.out.println("Speed1: " + speed1);
-   // System.out.println("Speed2: " + speed2);
-}
+    System.out.println("Speed1: " + speed1);
+    System.out.println("Speed2: " + speed2);
+  }
+
   public Command exampleMethodCommand() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
@@ -45,7 +56,8 @@ public class TankDriveSubsystem extends SubsystemBase {
   }
 
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
+   * An example method querying a boolean state of the subsystem (for example, a
+   * digital sensor).
    *
    * @return value of some boolean subsystem state, such as a digital sensor.
    */

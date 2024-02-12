@@ -41,9 +41,8 @@ public class RobotContainer {
     AHRS gyro = new AHRS(SPI.Port.kMXP);
 
     private TankDriveSubsystem tank = new TankDriveSubsystem(backLeftSpeedMotor, backRightSpeedMotor, frontLeftSpeedMotor, frontRightSpeedMotor);
-    //coment this back in to enable leg
-    //private DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
-    //private LegSubsystem leg = new LegSubsystem(solenoid);
+    private DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+    private LegSubsystem leg = new LegSubsystem(solenoid);
 
     SlewRateLimiter limitX = new SlewRateLimiter(6);
     SlewRateLimiter limitY = new SlewRateLimiter(6);
@@ -84,7 +83,6 @@ tank.setDefaultCommand(new RunCommand(() -> {
    
 
     kickButton.onTrue(new InstantCommand(() -> {
-      System.out.println("Kick Triggered");
       leg.toggle();
     }, leg));
   }
