@@ -29,15 +29,6 @@ public class TankDriveSubsystem extends SubsystemBase {
   }
 
   public void spin(double speed1, double speed2) {
-    if (speed1 < -0.45) {
-      speed1 = -0.45;
-    } if (speed1 > 0.45) {
-      speed1 = 0.45;
-    } if (speed2 > 0.45) {
-      speed2 = 0.45;
-    } if (speed2 < -0.45) {
-      speed2 = -0.45;
-    }
     backRight.set(speed2);
     backLeft.set(speed1);
     frontLeft.set(speed1);

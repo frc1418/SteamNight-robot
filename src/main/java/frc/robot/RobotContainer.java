@@ -73,8 +73,8 @@ tank.setDefaultCommand(new RunCommand(() -> {
       if (robot.isTeleopEnabled()){
       //System.out.println("2");
        tank.spin(
-            limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)),
-             limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)));    
+            limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)*0.4),
+             limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)*0.4));    
       }
       else 
       {
