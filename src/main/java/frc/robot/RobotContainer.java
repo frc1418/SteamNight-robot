@@ -52,7 +52,7 @@ public class RobotContainer {
   SlewRateLimiter limitY = new SlewRateLimiter(6);
 
   private boolean limiter = true;
-  private boolean limiter1 = false;
+  private boolean coast = false;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -66,8 +66,12 @@ public class RobotContainer {
 
   public void configureObjects() {
     resetMotors();
+    if (coast) {
+      coastDrive();
+    } else {
+      brakeDrive();
+    }
 
-    coastDrive();
   }
 
   private void configureBindings() {
@@ -78,6 +82,7 @@ public class RobotContainer {
     JoystickButton kickButton = new JoystickButton(rightJoystick, 1);
     JoystickButton limiterToggleButton = new JoystickButton(rightJoystick, 5);
     JoystickButton limiterToggleButton1 = new JoystickButton(rightJoystick, 6);
+    JoystickButton coastToggleButton = new JoystickButton(rightJoystick, 11);
 
     tank.setDefaultCommand(new RunCommand(() -> {
       // System.out.println("1");
@@ -85,9 +90,9 @@ public class RobotContainer {
         // System.out.println("2");
         if (limiter) {
           tank.spin(
-              limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.25),
-              limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.25));
-        } else if(limiter1) {
+              limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.3),
+              limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.3));
+        } else {
           tank.spin(
               limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.8),
               limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.8));
@@ -100,6 +105,12 @@ public class RobotContainer {
     kickButton.onTrue(new InstantCommand(() -> {
       leg.toggle();
     }, leg));
+    
+    coastToggleButton.onTrue(new InstantCommand(() -> {
+      coast = !coast;
+      System.out.println("Coast Enabled: " + coast);
+      configureObjects();
+    }));
 
     limiterToggleButton.and(limiterToggleButton1).onTrue(new InstantCommand(() -> {
       limiter = !limiter;
@@ -126,5 +137,12 @@ public class RobotContainer {
     frontRightSpeedMotor.setIdleMode(IdleMode.kCoast);
     backLeftSpeedMotor.setIdleMode(IdleMode.kCoast);
     backRightSpeedMotor.setIdleMode(IdleMode.kCoast);
+  }
+
+  public void brakeDrive() {
+    frontLeftSpeedMotor.setIdleMode(IdleMode.kBrake);
+    frontRightSpeedMotor.setIdleMode(IdleMode.kBrake);
+    backLeftSpeedMotor.setIdleMode(IdleMode.kBrake);
+    backRightSpeedMotor.setIdleMode(IdleMode.kBrake);
   }
 }
