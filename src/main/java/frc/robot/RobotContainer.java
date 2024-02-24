@@ -28,33 +28,42 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-    private final RobotBase robot;
+  private final RobotBase robot;
 
-    private CANSparkMax backRightSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_RIGHT_SPEED_ID, MotorType.kBrushed);
+  private CANSparkMax backRightSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_RIGHT_SPEED_ID,
+      MotorType.kBrushed);
 
-    private CANSparkMax frontRightSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_RIGHT_SPEED_ID, MotorType.kBrushed);
+  private CANSparkMax frontRightSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_RIGHT_SPEED_ID,
+      MotorType.kBrushed);
 
-    private CANSparkMax backLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_LEFT_SPEED_ID, MotorType.kBrushed);
+  private CANSparkMax backLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.BOTTOM_LEFT_SPEED_ID,
+      MotorType.kBrushed);
 
-    private CANSparkMax frontLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_LEFT_SPEED_ID, MotorType.kBrushed);
+  private CANSparkMax frontLeftSpeedMotor = new CANSparkMax(DrivetrainConstants.TOP_LEFT_SPEED_ID, MotorType.kBrushed);
 
-    AHRS gyro = new AHRS(SPI.Port.kMXP);
+  AHRS gyro = new AHRS(SPI.Port.kMXP);
 
-    private TankDriveSubsystem tank = new TankDriveSubsystem(backLeftSpeedMotor, backRightSpeedMotor, frontLeftSpeedMotor, frontRightSpeedMotor);
-    private DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
-    private LegSubsystem leg = new LegSubsystem(solenoid);
+  private TankDriveSubsystem tank = new TankDriveSubsystem(backLeftSpeedMotor, backRightSpeedMotor, frontLeftSpeedMotor,
+      frontRightSpeedMotor);
+  private DoubleSolenoid solenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+  private LegSubsystem leg = new LegSubsystem(solenoid);
 
-    SlewRateLimiter limitX = new SlewRateLimiter(6);
-    SlewRateLimiter limitY = new SlewRateLimiter(6);
+  SlewRateLimiter limitX = new SlewRateLimiter(6);
+  SlewRateLimiter limitY = new SlewRateLimiter(6);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  private boolean limiter = true;
+  private boolean limiter1 = false;
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer(RobotBase robot) {
-    this.robot  = robot;
+    this.robot = robot;
     // Configure the trigger bindings
     configureBindings();
     configureObjects();
   }
-  
+
   public void configureObjects() {
     resetMotors();
 
@@ -67,32 +76,42 @@ public class RobotContainer {
     Joystick altJoystick = new Joystick(2);
 
     JoystickButton kickButton = new JoystickButton(rightJoystick, 1);
+    JoystickButton limiterToggleButton = new JoystickButton(rightJoystick, 5);
+    JoystickButton limiterToggleButton1 = new JoystickButton(rightJoystick, 6);
 
-tank.setDefaultCommand(new RunCommand(() -> {
-     //System.out.println("1");
-      if (robot.isTeleopEnabled()){
-      //System.out.println("2");
-       tank.spin(
-            limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)*0.4),
-             limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND)*0.4));    
-      }
-      else 
-      {
+    tank.setDefaultCommand(new RunCommand(() -> {
+      // System.out.println("1");
+      if (robot.isTeleopEnabled()) {
+        // System.out.println("2");
+        if (limiter) {
+          tank.spin(
+              limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.25),
+              limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.25));
+        } else if(limiter1) {
+          tank.spin(
+              limitX.calculate(applyDeadband(leftJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.8),
+              limitY.calculate(applyDeadband(-rightJoystick.getY(), DrivetrainConstants.DRIFT_DEADBAND) * 0.8));
+        }
+      } else {
         tank.spin(0, 0);
-      }    }, tank));
-   
+      }
+    }, tank));
 
     kickButton.onTrue(new InstantCommand(() -> {
       leg.toggle();
     }, leg));
+
+    limiterToggleButton.and(limiterToggleButton1).onTrue(new InstantCommand(() -> {
+      limiter = !limiter;
+      System.out.println("Limiter Enabled: " + limiter);
+    }));
   }
 
-
   public double applyDeadband(double input, double deadband) {
-    if (Math.abs(input) < deadband) 
+    if (Math.abs(input) < deadband)
       return 0;
-    else return 
-      input;
+    else
+      return input;
   }
 
   public void resetMotors() {

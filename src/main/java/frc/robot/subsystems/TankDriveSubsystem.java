@@ -33,8 +33,8 @@ public class TankDriveSubsystem extends SubsystemBase {
     backLeft.set(speed1);
     frontLeft.set(speed1);
     frontRight.set(speed2);
-    System.out.println("Speed1: " + speed1);
-    System.out.println("Speed2: " + speed2);
+    // System.out.println("Speed1: " + speed1);
+    // System.out.println("Speed2: " + speed2);
   }
 
   public Command exampleMethodCommand() {
